@@ -6,8 +6,8 @@ export class Resolver {
     private readonly iface = new Interface(Contract.abi)
 
     constructor(
-        public readonly srcAddress: string
-        // public readonly dstAddress: string
+        public readonly srcAddress: string,
+        public readonly dstAddress: string
     ) {}
 
     public deploySrc(
@@ -37,21 +37,21 @@ export class Resolver {
         }
     }
 
-    // public deployDst(
-    //     /**
-    //      * Immutables from SrcEscrowCreated event with complement applied
-    //      */
-    //     immutables: Sdk.Immutables
-    // ): TransactionRequest {
-    //     return {
-    //         to: this.dstAddress,
-    //         data: this.iface.encodeFunctionData('deployDst', [
-    //             immutables.build(),
-    //             immutables.timeLocks.toSrcTimeLocks().privateCancellation
-    //         ]),
-    //         value: immutables.safetyDeposit
-    //     }
-    // }
+    public deployDst(
+        /**
+         * Immutables from SrcEscrowCreated event with complement applied
+         */
+        immutables: Sdk.Immutables
+    ): TransactionRequest {
+        return {
+            to: this.dstAddress,
+            data: this.iface.encodeFunctionData('deployDst', [
+                immutables.build(),
+                immutables.timeLocks.toSrcTimeLocks().privateCancellation
+            ]),
+            value: immutables.safetyDeposit
+        }
+    }
 
     // public withdraw(
     //     side: 'src' | 'dst',

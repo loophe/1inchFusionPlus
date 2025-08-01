@@ -36,7 +36,7 @@ import {
 } from '@1inch/cross-chain-sdk' 
 // import { time } from 'console'
 import {Chain} from './lib/create-order'
-
+import {EscrowFactory} from './lib/escrow-factory'
 // console.log(NetworkEnum.BINANCE)
 const secret = uint8ArrayToHex(randomBytes(32))
 console.log('secret', secret)
@@ -50,6 +50,9 @@ async function main() {
 
     let src: Chain
     let dst: Chain
+    let srcFactory: EscrowFactory
+
+
     // init 1/
 	;[src] = await Promise.all([initChain(config.chain.source)])
 	const srcChainUser = new Wallet(userPk, src.provider)
@@ -99,7 +102,8 @@ async function main() {
     const resolverPk = '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'
     const srcChainResolver = new Wallet(resolverPk, src.provider)
     const fillAmount = order.makingAmount
-    const resolverContract = new Resolver(src.resolver)
+    const resolverContract = new Resolver(src.resolver, '0x0000000000000000000000000000000000000000')
+    // console.log("
     const {txHash: orderFillHash, blockHash: srcDeployBlock} = await srcChainResolver.send(//1/2
         resolverContract.deploySrc(
             srcChainId,
@@ -115,6 +119,14 @@ async function main() {
 
     console.log(`[${srcChainId}]`, `Order ${orderHash} filled for ${fillAmount} in tx ${orderFillHash}`)
 
+    srcFactory = new EscrowFactory(src.provider, src.escrowFactory)
+    const srcEscrowEvent = await srcFactory.getSrcDeployEvent(srcDeployBlock)
+
+    const dstImmutables = srcEscrowEvent[0]
+        .withComplement(srcEscrowEvent[1])
+        .withTaker(new Address(resolverContract.dstAddress))
+
+    console.log(`[${dstChainId}]`, `Depositing ${dstImmutables.amount} for order ${orderHash}`)
 
 }
 main().catch(console.error);

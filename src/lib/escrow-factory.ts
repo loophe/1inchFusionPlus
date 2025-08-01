@@ -1,5 +1,5 @@
 import { id, Interface, JsonRpcProvider } from 'ethers';
-import Sdk from '@1inch/cross-chain-sdk';
+import Sdk, {Immutables,DstImmutablesComplement,HashLock,TimeLocks, Address} from '@1inch/cross-chain-sdk';
 import EscrowFactoryContract from './ABI/EscrowFactory.json';
 
 export class EscrowFactory {
@@ -51,20 +51,20 @@ export class EscrowFactory {
 		const complement = data.at(1);
 
 		return [
-			Sdk.Immutables.new({
+			Immutables.new({
 				orderHash: immutables[0],
-				hashLock: Sdk.HashLock.fromString(immutables[1]),
-				maker: Sdk.Address.fromBigInt(immutables[2]),
-				taker: Sdk.Address.fromBigInt(immutables[3]),
-				token: Sdk.Address.fromBigInt(immutables[4]),
+				hashLock: HashLock.fromString(immutables[1]),
+				maker: Address.fromBigInt(immutables[2]),
+				taker: Address.fromBigInt(immutables[3]),
+				token: Address.fromBigInt(immutables[4]),
 				amount: immutables[5],
 				safetyDeposit: immutables[6],
-				timeLocks: Sdk.TimeLocks.fromBigInt(immutables[7]),
+				timeLocks: TimeLocks.fromBigInt(immutables[7]),
 			}),
-			Sdk.DstImmutablesComplement.new({
-				maker: Sdk.Address.fromBigInt(complement[0]),
+			DstImmutablesComplement.new({
+				maker: Address.fromBigInt(complement[0]),
 				amount: complement[1],
-				token: Sdk.Address.fromBigInt(complement[2]),
+				token: Address.fromBigInt(complement[2]),
 				safetyDeposit: complement[3],
 			}),
 		];
