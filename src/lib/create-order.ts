@@ -12,11 +12,19 @@ import {
 // 	resolverAddress,
 // 	srcEscrowFactoryAddress,
 // } from './constants';
-import { parseEther, parseUnits } from 'ethers';
+import { parseEther, parseUnits, JsonRpcProvider } from 'ethers';
 import { UINT_40_MAX } from '@1inch/byte-utils';
+import {CreateServerReturnType} from 'prool'
+
+export type Chain = {
+	node?: CreateServerReturnType | undefined
+	provider: JsonRpcProvider
+	escrowFactory: string
+	resolver: string
+}
 
 export const createOrder = async (
-	src: any,
+	src: Chain,
 	srcSide: 'EVM' | 'APTOS',
 	srcUserAddress: string,
 	srcTokenAddress: Address,

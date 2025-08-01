@@ -35,7 +35,7 @@ import {
     AmountMode
 } from '@1inch/cross-chain-sdk' 
 // import { time } from 'console'
-
+import {Chain} from './lib/create-order'
 
 // console.log(NetworkEnum.BINANCE)
 const secret = uint8ArrayToHex(randomBytes(32))
@@ -46,12 +46,7 @@ async function main() {
 	const userPk = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
 	const srcChainId = NetworkEnum.ETHEREUM;
 	const dstChainId = NetworkEnum.POLYGON;
-	type Chain = {
-        // node?: CreateServerReturnType | undefined
-        provider: JsonRpcProvider
-        escrowFactory: string
-        resolver: string
-    }
+
 
     let src: Chain
     let dst: Chain
