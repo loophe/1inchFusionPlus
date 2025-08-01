@@ -66,6 +66,8 @@ async function main() {
     )
 
     const balace = await srcChainUser.tokenBalance(config.chain.source.tokens.USDC.address)
+    const bal = await src.provider.getBalance(await srcChainUser.getAddress())
+    console.log(`User ETH balance:`, bal.toString())
     console.log(`User ${await srcChainUser.getAddress()} balance:`, balace.toString())
     // approve LOP to spend USDC
     console.log('Approving LOP to spend USDC...')
@@ -76,10 +78,11 @@ async function main() {
     )
     // create_order 2/
     const order = await createOrder(
+            src,
 			'EVM',
 			await srcChainUser.getAddress(),
-			new Address("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
-			new Address("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"),
+            new Address(config.chain.source.tokens.USDC.address),
+			new Address(config.chain.destination.tokens.USDC.address),			
 			srcChainId,
 			dstChainId,
 			secret
@@ -115,10 +118,8 @@ async function main() {
         )
     )
 
-            console.log(`[${srcChainId}]`, `Order ${orderHash} filled for ${fillAmount} in tx ${orderFillHash}`)
-// }).catch((error) => {
-//     console.error('Error fetching block number:', error)
-// })
+    console.log(`[${srcChainId}]`, `Order ${orderHash} filled for ${fillAmount} in tx ${orderFillHash}`)
+
 
 }
 main().catch(console.error);

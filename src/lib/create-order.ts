@@ -7,15 +7,16 @@ import {
 	TimeLocks,
 	AuctionDetails,
 } from '@1inch/cross-chain-sdk';
-import {
-	provider,
-	resolverAddress,
-	srcEscrowFactoryAddress,
-} from './constants';
+// import {
+// 	provider,
+// 	resolverAddress,
+// 	srcEscrowFactoryAddress,
+// } from './constants';
 import { parseEther, parseUnits } from 'ethers';
 import { UINT_40_MAX } from '@1inch/byte-utils';
 
 export const createOrder = async (
+	src: any,
 	srcSide: 'EVM' | 'APTOS',
 	srcUserAddress: string,
 	srcTokenAddress: Address,
@@ -32,10 +33,10 @@ export const createOrder = async (
 		destChainId,
 		secret
 	);
-	const srcTimestamp = BigInt((await provider.getBlock('latest'))!.timestamp);
+	const srcTimestamp = BigInt((await src.provider.getBlock('latest'))!.timestamp);
 
 	const order = CrossChainOrder.new(
-		new Address(srcEscrowFactoryAddress),
+		new Address(src.escrowFactory),
 		{
 			salt: randBigInt(1000n),
 			maker: new Address(srcUserAddress),
@@ -69,7 +70,7 @@ export const createOrder = async (
 			}),
 			whitelist: [
 				{
-					address: resolverAddress,
+					address: new Address(src.resolver),
 					allowFrom: 0n,
 				},
 			],
