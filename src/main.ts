@@ -121,7 +121,7 @@ async function main() {
 
     srcFactory = new EscrowFactory(src.provider, src.escrowFactory)
     const srcEscrowEvent = await srcFactory.getSrcDeployEvent(srcDeployBlock)
-
+    console.log('stcEscrowEvent :', srcEscrowEvent )
     const dstImmutables = srcEscrowEvent[0]
         .withComplement(srcEscrowEvent[1])
         .withTaker(new Address(resolverContract.dstAddress))

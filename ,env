@@ -1,0 +1,2 @@
+FLASK_APP=relayer
+FLASK_DEBUG=1
