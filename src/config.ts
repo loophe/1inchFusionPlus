@@ -54,12 +54,12 @@ export const config = {
             url: process.env.DST_CHAIN_RPC,
             createFork: process.env.DST_CHAIN_CREATE_FORK,
             limitOrderProtocol: '0x111111125421ca6dc452d289314280a0f8842a65',
-            wrappedNative: '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c',
+            wrappedNative: '0x4200000000000000000000000000000000000042',
             ownerPrivateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
             tokens: {
                 USDC: {
-                    address: '0x8965349fb649a33a30cbfda057d8ec2c48abe2a2',
-                    donor: '0x4188663a85C92EEa35b5AD3AA5cA7CeB237C6fe9'
+                    address: '0x7F5c764cBc14f9669B88837ca1490cCa17c31607',
+                    donor: '0x133FA49A01801264fC05A12EF5ef9Db6a302e93D'
                 }
             }
         }

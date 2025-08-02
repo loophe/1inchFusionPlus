@@ -44,6 +44,7 @@ console.log('secret', secret)
 async function main() {
  
 	const userPk = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+    const resolverPk = '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'
 
 	const srcChainId = NetworkEnum.ETHEREUM;
 	const dstChainId = NetworkEnum.OPTIMISM;
@@ -58,6 +59,8 @@ async function main() {
 	;[src, dst] = await Promise.all([initChain(config.chain.source), initChain(config.chain.destination)])
 	const srcChainUser = new Wallet(userPk, src.provider)
     
+    const dstChainResolver = new Wallet(resolverPk, dst.provider)
+    const srcChainResolver = new Wallet(resolverPk, src.provider)
     // get 1000 USDC for user in SRC chain and approve to LOP
     await srcChainUser.topUpFromDonor(
         config.chain.source.tokens.USDC.address,
@@ -76,6 +79,23 @@ async function main() {
         config.chain.source.limitOrderProtocol,
         MaxUint256
     )
+
+
+    // get 2000 USDC for resolver in DST chain
+        // srcResolverContract = await Wallet.fromAddress(src.resolver, src.provider)
+    const dstResolverContract = await Wallet.fromAddress(dst.resolver, dst.provider)
+        await dstResolverContract.topUpFromDonor(
+            config.chain.destination.tokens.USDC.address,
+            config.chain.destination.tokens.USDC.donor,
+            parseUnits('2000', 6)
+        )
+    const dstBalance = await dstResolverContract.tokenBalance(config.chain.destination.tokens.USDC.address)
+    console.log(`DST Resolver USDC balance:`, dstBalance.toString())
+    // top up contract for approve
+        await dstChainResolver.transfer(dst.resolver, parseEther('1'))
+        await dstResolverContract.unlimitedApprove(config.chain.destination.tokens.USDC.address, dst.escrowFactory)
+    console.log('Approving escrow factory to spend USDC...')
+    
     // create_order 2/
     const order = await createOrder(
             src,
@@ -101,11 +121,9 @@ async function main() {
 
 
     //fill order 4/
-    const resolverPk = '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'
-    const dstChainResolver = new Wallet(resolverPk, dst.provider)
-    const srcChainResolver = new Wallet(resolverPk, src.provider)
+    
     const fillAmount = order.makingAmount
-    const resolverContract = new Resolver(src.resolver, '0x0000000000000000000000000000000000000000')
+    const resolverContract = new Resolver(src.resolver, dst.resolver)
     // console.log("
     const {txHash: orderFillHash, blockHash: srcDeployBlock} = await srcChainResolver.send(//1/2
         resolverContract.deploySrc(
