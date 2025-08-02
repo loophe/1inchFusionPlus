@@ -30,7 +30,7 @@ export const createOrder = async (
 	srcTokenAddress: Address,
 	destTokenAddress: Address,
 	srcChainId: SupportedChain,
-	destChainId: SupportedChain,
+	dstChainId: SupportedChain,
 	secret: string
 ) => {
 	console.log(
@@ -38,7 +38,7 @@ export const createOrder = async (
 		srcTokenAddress,
 		destTokenAddress,
 		srcChainId,
-		destChainId,
+		dstChainId,
 		secret
 	);
 	const srcTimestamp = BigInt((await src.provider.getBlock('latest'))!.timestamp);
@@ -65,7 +65,7 @@ export const createOrder = async (
 				dstCancellation: 101n, // 1sec public withdrawal
 			}),
 			srcChainId,
-			dstChainId: destChainId,
+			dstChainId: dstChainId,
 			srcSafetyDeposit: parseEther('0.001'),
 			dstSafetyDeposit: parseEther('0.001'),
 		},

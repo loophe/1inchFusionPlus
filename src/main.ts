@@ -44,8 +44,9 @@ console.log('secret', secret)
 async function main() {
  
 	const userPk = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d'
+
 	const srcChainId = NetworkEnum.ETHEREUM;
-	const dstChainId = NetworkEnum.POLYGON;
+	const dstChainId = NetworkEnum.OPTIMISM;
 
 
     let src: Chain
@@ -54,8 +55,9 @@ async function main() {
 
 
     // init 1/
-	;[src] = await Promise.all([initChain(config.chain.source)])
+	;[src, dst] = await Promise.all([initChain(config.chain.source), initChain(config.chain.destination)])
 	const srcChainUser = new Wallet(userPk, src.provider)
+    
     // get 1000 USDC for user in SRC chain and approve to LOP
     await srcChainUser.topUpFromDonor(
         config.chain.source.tokens.USDC.address,
@@ -100,6 +102,7 @@ async function main() {
 
     //fill order 4/
     const resolverPk = '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a'
+    const dstChainResolver = new Wallet(resolverPk, dst.provider)
     const srcChainResolver = new Wallet(resolverPk, src.provider)
     const fillAmount = order.makingAmount
     const resolverContract = new Resolver(src.resolver, '0x0000000000000000000000000000000000000000')
@@ -128,5 +131,10 @@ async function main() {
 
     console.log(`[${dstChainId}]`, `Depositing ${dstImmutables.amount} for order ${orderHash}`)
 
+
+    const {txHash: dstDepositHash, blockTimestamp: dstDeployedAt} = await dstChainResolver.send(//2/2
+                resolverContract.deployDst(dstImmutables)
+            )
+    console.log(`[${dstChainId}]`, `Created dst deposit for order ${orderHash} in tx ${dstDepositHash}`)
 }
 main().catch(console.error);

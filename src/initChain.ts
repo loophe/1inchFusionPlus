@@ -38,8 +38,8 @@ async function getProvider(cnf: ChainConfig): Promise<{provider: JsonRpcProvider
 
     // const address = node.address()
     // assert(address)
-
-    const provider = new JsonRpcProvider(`http://[::]:46335/1`, cnf.chainId, {
+    console.log(`Connecting to ${cnf.url} with chainId ${cnf.chainId}`)
+    const provider = new JsonRpcProvider(`${cnf.url}`, cnf.chainId, {
         cacheTimeout: -1,
         staticNetwork: true
     })

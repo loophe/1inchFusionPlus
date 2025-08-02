@@ -1,5 +1,9 @@
 // import {z} from 'zod'
 // import Sdk from '@1inch/cross-chain-sdk'
+import dotenv from "dotenv"
+
+dotenv.config({ path: '.env' })
+
 import {  
     HashLock,  
     TimeLocks,
@@ -46,7 +50,7 @@ export const config = {
             }
         },
         destination: {
-            chainId: NetworkEnum.BINANCE,
+            chainId: NetworkEnum.OPTIMISM,
             url: process.env.DST_CHAIN_RPC,
             createFork: process.env.DST_CHAIN_CREATE_FORK,
             limitOrderProtocol: '0x111111125421ca6dc452d289314280a0f8842a65',
